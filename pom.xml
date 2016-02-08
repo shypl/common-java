@@ -10,7 +10,7 @@
 
 	<name>Java common</name>
 	<description>Java common assistants kit</description>
-	<url>https://github.com/shypl/jak.git</url>
+	<url>https://github.com/shypl/common-java.git</url>
 
 	<licenses>
 		<license>
@@ -29,9 +29,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:https://github.com/shypl/jak.git</connection>
-		<developerConnection>scm:git:https://github.com/shypl/jak.git</developerConnection>
-		<url>https://github.com/shypl/jak</url>
+		<connection>scm:git:https://github.com/shypl/common-java.git</connection>
+		<developerConnection>scm:git:https://github.com/shypl/common-java.git</developerConnection>
+		<url>https://github.com/shypl/common-java</url>
 		<tag>HEAD</tag>
 	</scm>
 
