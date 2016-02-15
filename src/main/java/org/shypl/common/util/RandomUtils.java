@@ -1,17 +1,15 @@
 package org.shypl.common.util;
 
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class RandomUtils {
-	private static final Random RANDOM = new Random();
-
 	public static int getInt() {
-		return RANDOM.nextInt();
+		return ThreadLocalRandom.current().nextInt();
 	}
 
 	public static int getInt(int bound) {
-		return RANDOM.nextInt(bound);
+		return ThreadLocalRandom.current().nextInt(bound);
 	}
 
 	public static int getInt(int min, int max) {
@@ -38,11 +36,11 @@ public final class RandomUtils {
 	}
 
 	public static long getLong() {
-		return RANDOM.nextLong();
+		return ThreadLocalRandom.current().nextLong();
 	}
 
 	public static boolean getBoolean() {
-		return RANDOM.nextBoolean();
+		return ThreadLocalRandom.current().nextBoolean();
 	}
 
 	public static boolean getElement(boolean[] array) {
