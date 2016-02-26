@@ -8,7 +8,7 @@ public class SafeUnsignedLong {
 	private final Lock                    lock            = new ReentrantLock();
 	private final Observers<LongConsumer> changeObservers = new Observers<>();
 
-	private volatile long value;
+	private long value;
 
 	public SafeUnsignedLong(long value) {
 		this.value = value;
