@@ -1,4 +1,4 @@
-package org.shypl.common.util;
+package org.shypl.common.app;
 
 import java.util.HashMap;
 import java.util.Map;
