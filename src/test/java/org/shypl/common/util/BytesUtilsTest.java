@@ -3,14 +3,14 @@ package org.shypl.common.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ByteUtilsTest {
+public class BytesUtilsTest {
 
 	@Test
 	public void testWriteInt() throws Exception {
 		byte[] bytes = new byte[5];
 		byte[] actual = {(byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF, 0};
 
-		ByteUtils.writeInt(bytes, Integer.MAX_VALUE);
+		BytesUtils.writeInt(bytes, Integer.MAX_VALUE);
 
 		Assert.assertArrayEquals(bytes, actual);
 	}
@@ -20,7 +20,7 @@ public class ByteUtilsTest {
 		byte[] bytes = new byte[5];
 		byte[] actual = {0, (byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 
-		ByteUtils.writeInt(bytes, Integer.MAX_VALUE, 1);
+		BytesUtils.writeInt(bytes, Integer.MAX_VALUE, 1);
 
 		Assert.assertArrayEquals(bytes, actual);
 	}
@@ -30,7 +30,7 @@ public class ByteUtilsTest {
 		byte[] bytes = new byte[9];
 		byte[] actual = {(byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, 0};
 
-		ByteUtils.writeLong(bytes, Long.MAX_VALUE);
+		BytesUtils.writeLong(bytes, Long.MAX_VALUE);
 
 		Assert.assertArrayEquals(bytes, actual);
 	}
@@ -40,7 +40,7 @@ public class ByteUtilsTest {
 		byte[] bytes = new byte[9];
 		byte[] actual = {0, (byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 
-		ByteUtils.writeLong(bytes, Long.MAX_VALUE, 1);
+		BytesUtils.writeLong(bytes, Long.MAX_VALUE, 1);
 
 		Assert.assertArrayEquals(bytes, actual);
 	}
@@ -49,7 +49,7 @@ public class ByteUtilsTest {
 	public void testReadInt() throws Exception {
 		byte[] bytes = {(byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF, 0};
 
-		int result = ByteUtils.readInt(bytes);
+		int result = BytesUtils.readInt(bytes);
 
 		Assert.assertEquals(result, Integer.MAX_VALUE);
 	}
@@ -58,7 +58,7 @@ public class ByteUtilsTest {
 	public void testReadInt1() throws Exception {
 		byte[] bytes = {0, (byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 
-		int result = ByteUtils.readInt(bytes, 1);
+		int result = BytesUtils.readInt(bytes, 1);
 
 		Assert.assertEquals(result, Integer.MAX_VALUE);
 	}
@@ -67,7 +67,7 @@ public class ByteUtilsTest {
 	public void testReadLong() throws Exception {
 		byte[] bytes = {(byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, 0};
 
-		long result = ByteUtils.readLong(bytes);
+		long result = BytesUtils.readLong(bytes);
 
 		Assert.assertEquals(result, Long.MAX_VALUE);
 	}
@@ -76,7 +76,7 @@ public class ByteUtilsTest {
 	public void testReadLong1() throws Exception {
 		byte[] bytes = {0, (byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 
-		long result = ByteUtils.readLong(bytes, 1);
+		long result = BytesUtils.readLong(bytes, 1);
 
 		Assert.assertEquals(result, Long.MAX_VALUE);
 	}
@@ -85,7 +85,7 @@ public class ByteUtilsTest {
 	public void testGetIntBytes() throws Exception {
 		byte[] actual = {(byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 
-		byte[] result = ByteUtils.getIntBytes(Integer.MAX_VALUE);
+		byte[] result = BytesUtils.getIntBytes(Integer.MAX_VALUE);
 
 		Assert.assertArrayEquals(result, actual);
 	}
@@ -94,7 +94,7 @@ public class ByteUtilsTest {
 	public void testGetLongBytes() throws Exception {
 		byte[] actual = {(byte)0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 
-		byte[] result = ByteUtils.getLongBytes(Long.MAX_VALUE);
+		byte[] result = BytesUtils.getLongBytes(Long.MAX_VALUE);
 
 		Assert.assertArrayEquals(result, actual);
 	}

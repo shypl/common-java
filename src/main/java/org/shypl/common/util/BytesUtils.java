@@ -1,6 +1,6 @@
 package org.shypl.common.util;
 
-public final class ByteUtils {
+public final class BytesUtils {
 
 	public static void writeInt(byte[] bytes, int value) {
 		writeInt(bytes, value, 0);
