@@ -5,13 +5,17 @@ import java.util.Map;
 
 public final class StringUtils {
 
-	private static final String STRING_NULL                = "<null>";
-	private static final String STRING_TRUE                = "<true>";
-	private static final String STRING_FALSE               = "<false>";
-	private static final String STRING_SEQUENCE_SEPARATOR  = ", ";
-	private static final String STRING_KEY_VALUE_SEPARATOR = ": ";
-	private static final String STRING_EMPTY_LIST          = "[]";
-	private static final String STRING_EMPTY_MAP           = "{}";
+	public static final String STRING_NULL                = "<null>";
+	public static final String STRING_TRUE                = "<true>";
+	public static final String STRING_FALSE               = "<false>";
+	public static final String STRING_SEQUENCE_SEPARATOR  = ", ";
+	public static final String STRING_KEY_VALUE_SEPARATOR = ": ";
+	public static final String STRING_LIST_EMPTY          = "[]";
+	public static final String STRING_MAP_EMPTY           = "{}";
+	public static final char   STRING_LIST_OPEN           = '[';
+	public static final char   STRING_LIST_CLOSE          = ']';
+	public static final char   STRING_MAP_OPEN            = '{';
+	public static final char   STRING_MAP_CLOSE           = '}';
 
 	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
@@ -123,12 +127,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(9 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (boolean v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -138,7 +142,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(byte[] a) {
@@ -146,12 +150,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (byte v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -162,7 +166,7 @@ public final class StringUtils {
 			int i = v & 0xFF;
 			string.append(DIGITS[i >>> 4]).append(DIGITS[i & 0x0F]);
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(char[] a) {
@@ -170,12 +174,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(3 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (char v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -185,7 +189,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(short[] a) {
@@ -193,12 +197,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (short v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -208,7 +212,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(int[] a) {
@@ -216,12 +220,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (int v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -231,7 +235,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(long[] a) {
@@ -239,12 +243,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (long v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -254,7 +258,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(float[] a) {
@@ -262,12 +266,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (float v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -277,7 +281,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(double[] a) {
@@ -285,12 +289,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (double v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -300,7 +304,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(Object[] a) {
@@ -308,12 +312,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (a.length == 0) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (Object v : a) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -323,7 +327,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(Collection<?> c) {
@@ -331,12 +335,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (c.isEmpty()) {
-			return STRING_EMPTY_LIST;
+			return STRING_LIST_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(4 * c.size());
 		boolean sep = false;
-		string.append('[');
+		string.append(STRING_LIST_OPEN);
 		for (Object v : c) {
 			if (sep) {
 				string.append(STRING_SEQUENCE_SEPARATOR);
@@ -346,7 +350,7 @@ public final class StringUtils {
 			}
 			string.append(toString(v));
 		}
-		return string.append(']').toString();
+		return string.append(STRING_LIST_CLOSE).toString();
 	}
 
 	public static String toString(Map<?, ?> m) {
@@ -354,12 +358,12 @@ public final class StringUtils {
 			return STRING_NULL;
 		}
 		if (m.isEmpty()) {
-			return STRING_EMPTY_MAP;
+			return STRING_MAP_EMPTY;
 		}
 
 		StringBuilder string = new StringBuilder(6 * m.size());
 		boolean sep = false;
-		string.append('{');
+		string.append(STRING_MAP_OPEN);
 
 		for (Map.Entry<?, ?> e : m.entrySet()) {
 			if (sep) {
@@ -372,7 +376,7 @@ public final class StringUtils {
 				.append(STRING_KEY_VALUE_SEPARATOR)
 				.append(toString(e.getValue()));
 		}
-		return string.append('}').toString();
+		return string.append(STRING_MAP_CLOSE).toString();
 	}
 
 	public static void toString(StringBuilder builder, boolean v) {
@@ -485,11 +489,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 9 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (boolean v : a) {
 				if (sep) {
@@ -501,7 +505,7 @@ public final class StringUtils {
 				toString(builder, v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -510,11 +514,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (byte v : a) {
 				if (sep) {
@@ -527,7 +531,7 @@ public final class StringUtils {
 				builder.append(DIGITS[i >>> 4]).append(DIGITS[i & 0x0F]);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -536,11 +540,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 3 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (char v : a) {
 				if (sep) {
@@ -552,7 +556,7 @@ public final class StringUtils {
 				builder.append(v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -561,11 +565,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (short v : a) {
 				if (sep) {
@@ -577,7 +581,7 @@ public final class StringUtils {
 				builder.append(v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -586,11 +590,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (int v : a) {
 				if (sep) {
@@ -602,7 +606,7 @@ public final class StringUtils {
 				builder.append(v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -611,11 +615,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (long v : a) {
 				if (sep) {
@@ -627,7 +631,7 @@ public final class StringUtils {
 				builder.append(v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -636,11 +640,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (float v : a) {
 				if (sep) {
@@ -652,7 +656,7 @@ public final class StringUtils {
 				builder.append(v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -661,11 +665,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (double v : a) {
 				if (sep) {
@@ -677,7 +681,7 @@ public final class StringUtils {
 				builder.append(v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -686,11 +690,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (a.length == 0) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * a.length);
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (Object v : a) {
 				if (sep) {
@@ -702,7 +706,7 @@ public final class StringUtils {
 				toString(builder, v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -711,11 +715,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (c.isEmpty()) {
-			builder.append(STRING_EMPTY_LIST);
+			builder.append(STRING_LIST_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 4 * c.size());
-			builder.append('[');
+			builder.append(STRING_LIST_OPEN);
 			boolean sep = false;
 			for (Object v : c) {
 				if (sep) {
@@ -727,7 +731,7 @@ public final class StringUtils {
 				toString(builder, v);
 			}
 
-			builder.append(']');
+			builder.append(STRING_LIST_CLOSE);
 		}
 	}
 
@@ -736,11 +740,11 @@ public final class StringUtils {
 			builder.append(STRING_NULL);
 		}
 		else if (m.isEmpty()) {
-			builder.append(STRING_EMPTY_MAP);
+			builder.append(STRING_MAP_EMPTY);
 		}
 		else {
 			builder.ensureCapacity(builder.capacity() + 6 * m.size());
-			builder.append('{');
+			builder.append(STRING_MAP_OPEN);
 			boolean sep = false;
 			for (Map.Entry<?, ?> e : m.entrySet()) {
 				if (sep) {
@@ -753,7 +757,7 @@ public final class StringUtils {
 				builder.append(STRING_KEY_VALUE_SEPARATOR);
 				toString(builder, e.getValue());
 			}
-			builder.append('}');
+			builder.append(STRING_MAP_CLOSE);
 		}
 	}
 }
