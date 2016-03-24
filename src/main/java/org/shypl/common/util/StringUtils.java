@@ -54,28 +54,28 @@ public final class StringUtils {
 		}
 
 		if (v instanceof Boolean) {
-			return toString((boolean)v);
+			return toString(((Boolean)v).booleanValue());
 		}
 		if (v instanceof Byte) {
-			return toString((byte)v);
+			return toString(((Byte)v).byteValue());
 		}
 		if (v instanceof Character) {
-			return toString((char)v);
+			return toString(((Character)v).charValue());
 		}
 		if (v instanceof Short) {
-			return toString((short)v);
+			return toString(((Short)v).shortValue());
 		}
 		if (v instanceof Integer) {
-			return toString((int)v);
+			return toString(((Integer)v).intValue());
 		}
 		if (v instanceof Long) {
-			return toString((long)v);
+			return toString(((Long)v).longValue());
 		}
 		if (v instanceof Float) {
-			return toString((float)v);
+			return toString(((Float)v).floatValue());
 		}
 		if (v instanceof Double) {
-			return toString((double)v);
+			return toString(((Double)v).doubleValue());
 		}
 
 		if (v instanceof Collection) {
@@ -173,7 +173,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(3 * a.length);
 		boolean sep = false;
 		string.append('[');
 		for (char v : a) {
@@ -196,7 +196,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
 		string.append('[');
 		for (short v : a) {
@@ -219,7 +219,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
 		string.append('[');
 		for (int v : a) {
@@ -242,7 +242,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
 		string.append('[');
 		for (long v : a) {
@@ -265,7 +265,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
 		string.append('[');
 		for (float v : a) {
@@ -288,7 +288,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
 		string.append('[');
 		for (double v : a) {
@@ -311,7 +311,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(4 * a.length);
 		boolean sep = false;
 		string.append('[');
 		for (Object v : a) {
@@ -334,7 +334,7 @@ public final class StringUtils {
 			return STRING_EMPTY_LIST;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(4 * c.size());
 		boolean sep = false;
 		string.append('[');
 		for (Object v : c) {
@@ -357,7 +357,7 @@ public final class StringUtils {
 			return STRING_EMPTY_MAP;
 		}
 
-		StringBuilder string = new StringBuilder();
+		StringBuilder string = new StringBuilder(6 * m.size());
 		boolean sep = false;
 		string.append('{');
 
@@ -373,5 +373,387 @@ public final class StringUtils {
 				.append(toString(e.getValue()));
 		}
 		return string.append('}').toString();
+	}
+
+	public static void toString(StringBuilder builder, boolean v) {
+		builder.append(v ? STRING_TRUE : STRING_FALSE);
+	}
+
+	public static void toString(StringBuilder builder, byte v) {
+		int i = v & 0xFF;
+		builder.ensureCapacity(builder.capacity() + 2);
+		builder.append(DIGITS[i >>> 4]).append(DIGITS[i & 0x0F]);
+	}
+
+	public static void toString(StringBuilder builder, char v) {
+		builder.append(v);
+	}
+
+	public static void toString(StringBuilder builder, short v) {
+		builder.append(v);
+	}
+
+	public static void toString(StringBuilder builder, int v) {
+		builder.append(v);
+	}
+
+	public static void toString(StringBuilder builder, long v) {
+		builder.append(v);
+	}
+
+	public static void toString(StringBuilder builder, float v) {
+		builder.append(v);
+	}
+
+	public static void toString(StringBuilder builder, double v) {
+		builder.append(v);
+	}
+
+	public static void toString(StringBuilder builder, Object v) {
+		if (v == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (v instanceof Boolean) {
+			toString(builder, ((Boolean)v).booleanValue());
+		}
+		else if (v instanceof Byte) {
+			toString(builder, ((Byte)v).byteValue());
+		}
+		else if (v instanceof Character) {
+			toString(builder, ((Character)v).charValue());
+		}
+		else if (v instanceof Short) {
+			toString(builder, ((Short)v).shortValue());
+		}
+		else if (v instanceof Integer) {
+			toString(builder, ((Integer)v).intValue());
+		}
+		else if (v instanceof Long) {
+			toString(builder, ((Long)v).longValue());
+		}
+		else if (v instanceof Float) {
+			toString(builder, ((Float)v).floatValue());
+		}
+		else if (v instanceof Double) {
+			toString(builder, ((Double)v).doubleValue());
+		}
+
+		else if (v instanceof Collection) {
+			toString(builder, (Collection)v);
+		}
+
+		else if (v instanceof Map) {
+			toString(builder, (Map)v);
+		}
+
+		else if (v instanceof boolean[]) {
+			toString(builder, (boolean[])v);
+		}
+		else if (v instanceof byte[]) {
+			toString(builder, (byte[])v);
+		}
+		else if (v instanceof char[]) {
+			toString(builder, (char[])v);
+		}
+		else if (v instanceof short[]) {
+			toString(builder, (short[])v);
+		}
+		else if (v instanceof int[]) {
+			toString(builder, (int[])v);
+		}
+		else if (v instanceof long[]) {
+			toString(builder, (long[])v);
+		}
+		else if (v instanceof float[]) {
+			toString(builder, (float[])v);
+		}
+		else if (v instanceof double[]) {
+			toString(builder, (double[])v);
+		}
+
+		else if (v.getClass().isArray()) {
+			toString(builder, (Object[])v);
+		}
+
+		else {
+			builder.append(v.toString());
+		}
+	}
+
+	public static void toString(StringBuilder builder, boolean[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 9 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (boolean v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				toString(builder, v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, byte[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (byte v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				int i = v & 0xFF;
+				builder.append(DIGITS[i >>> 4]).append(DIGITS[i & 0x0F]);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, char[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 3 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (char v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				builder.append(v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, short[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (short v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				builder.append(v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, int[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (int v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				builder.append(v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, long[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (long v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				builder.append(v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, float[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (float v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				builder.append(v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, double[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (double v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				builder.append(v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, Object[] a) {
+		if (a == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (a.length == 0) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * a.length);
+			builder.append('[');
+			boolean sep = false;
+			for (Object v : a) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				toString(builder, v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, Collection<?> c) {
+		if (c == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (c.isEmpty()) {
+			builder.append(STRING_EMPTY_LIST);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 4 * c.size());
+			builder.append('[');
+			boolean sep = false;
+			for (Object v : c) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				toString(builder, v);
+			}
+
+			builder.append(']');
+		}
+	}
+
+	public static void toString(StringBuilder builder, Map<?, ?> m) {
+		if (m == null) {
+			builder.append(STRING_NULL);
+		}
+		else if (m.isEmpty()) {
+			builder.append(STRING_EMPTY_MAP);
+		}
+		else {
+			builder.ensureCapacity(builder.capacity() + 6 * m.size());
+			builder.append('{');
+			boolean sep = false;
+			for (Map.Entry<?, ?> e : m.entrySet()) {
+				if (sep) {
+					builder.append(STRING_SEQUENCE_SEPARATOR);
+				}
+				else {
+					sep = true;
+				}
+				toString(builder, e.getKey());
+				builder.append(STRING_KEY_VALUE_SEPARATOR);
+				toString(builder, e.getValue());
+			}
+			builder.append('}');
+		}
 	}
 }
