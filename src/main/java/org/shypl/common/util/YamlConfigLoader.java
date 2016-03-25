@@ -1,4 +1,4 @@
-package org.shypl.common.app;
+package org.shypl.common.util;
 
 import org.yaml.snakeyaml.Yaml;
 

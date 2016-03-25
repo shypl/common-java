@@ -1,5 +1,7 @@
 package org.shypl.common.app;
 
+import org.shypl.common.util.YamlConfigLoader;
+
 import java.util.HashMap;
 import java.util.Map;
 
