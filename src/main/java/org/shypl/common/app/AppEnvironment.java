@@ -7,10 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class AppEnvironment {
-	public final Path              path;
-	public final String            type;
-	public final boolean           testMode;
-	public final AppConfigProvider configs;
+	private final Path              path;
+	private final String            type;
+	private final boolean           testMode;
+	private final AppConfigProvider configProvider;
 
 	public AppEnvironment(String path) {
 		this(Paths.get(path));
@@ -20,7 +20,13 @@ public class AppEnvironment {
 		this.path = path.toAbsolutePath();
 
 		try {
-			type = Files.newBufferedReader(getPathTo("private/config/env"), StandardCharsets.UTF_8).readLine();
+			Path pathToEnv = getPathTo("private/config/env");
+			if (Files.exists(path)) {
+				type = Files.newBufferedReader(pathToEnv, StandardCharsets.UTF_8).readLine();
+			}
+			else {
+				type = "dev";
+			}
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -28,7 +34,11 @@ public class AppEnvironment {
 
 		testMode = type == null || !(type.equals("prod") || type.equals("production"));
 
-		configs = new AppConfigProvider(this);
+		configProvider = new AppConfigProvider(this);
+	}
+
+	public Path getPath() {
+		return path;
 	}
 
 	public Path getPathTo(String target) {
@@ -45,5 +55,21 @@ public class AppEnvironment {
 		}
 
 		return file;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public boolean isTestMode() {
+		return testMode;
+	}
+
+	public <T> T getConfig(Class<T> type) {
+		return configProvider.get(type);
+	}
+
+	public AppConfigProvider getConfigProvider() {
+		return configProvider;
 	}
 }
