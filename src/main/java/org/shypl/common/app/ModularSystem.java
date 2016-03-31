@@ -21,20 +21,24 @@ public class ModularSystem {
 	private boolean started;
 
 	public void add(Module<?> module) {
-		Object facade = module.getFacade();
-		Class<?> facadeClass = facade.getClass();
+		if (!modules.contains(module)) {
 
-		if (!facadeClass.isAssignableFrom(PrivateModuleFacade.class)) {
-			if (facades.containsKey(facadeClass)) {
-				if (facades.get(facadeClass) != module) {
-					throw new IllegalArgumentException("Module for facade " + facadeClass.getName() + " is already exists");
+			Object facade = module.getFacade();
+			Class<?> facadeClass = facade.getClass();
+
+			if (!facadeClass.isAssignableFrom(PrivateModuleFacade.class)) {
+				if (facades.containsKey(facadeClass)) {
+					if (facades.get(facadeClass) != module) {
+						throw new IllegalArgumentException("Module for facade " + facadeClass.getName() + " is already exists");
+					}
+				}
+				else {
+					facades.put(facadeClass, facade);
 				}
 			}
-			else {
-				facades.put(facadeClass, facade);
-			}
+
+			modules.add(module);
 		}
-		modules.add(module);
 	}
 
 	public void addMany(Module<?>... modules) {
