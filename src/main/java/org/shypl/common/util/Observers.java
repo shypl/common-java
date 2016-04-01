@@ -1,5 +1,7 @@
 package org.shypl.common.util;
 
+import org.slf4j.LoggerFactory;
+
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
@@ -74,7 +76,12 @@ public class Observers<T> {
 	@SuppressWarnings("unchecked")
 	private void inform0(Consumer<T> informer, Object[] observers) {
 		for (Object observer : observers) {
-			informer.accept((T)observer);
+			try {
+				informer.accept((T)observer);
+			}
+			catch (Throwable e) {
+				LoggerFactory.getLogger(Observers.class).error("Error in inform observer", e);
+			}
 		}
 	}
 
