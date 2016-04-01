@@ -6,12 +6,14 @@ import java.util.function.LongConsumer;
 
 public class SafeUnsignedLong {
 	private final Lock                    lock            = new ReentrantLock();
-	private final Observers<LongConsumer> changeObservers = new Observers<>();
+	private final Observers<LongConsumer> changeObservers;
 
 	private long value;
 
 	public SafeUnsignedLong(long value) {
 		this.value = value;
+
+		changeObservers = new Observers<>(observer -> observer.accept(SafeUnsignedLong.this.value));
 	}
 
 	public long get() {
@@ -100,7 +102,7 @@ public class SafeUnsignedLong {
 		return subtractIfEnough(1);
 	}
 
-	public ObserverHolder addChangeObserver(LongConsumer observer) {
+	public Cancelable addChangeObserver(LongConsumer observer) {
 		return changeObservers.add(observer);
 	}
 
@@ -109,8 +111,6 @@ public class SafeUnsignedLong {
 	}
 
 	private void notifyChangeObservers() {
-		for (LongConsumer observer : changeObservers) {
-			observer.accept(this.value);
-		}
+		changeObservers.inform();
 	}
 }
