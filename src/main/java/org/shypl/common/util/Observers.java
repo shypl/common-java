@@ -50,6 +50,17 @@ public class Observers<T> {
 		}
 	}
 
+	public void removeAll() {
+		lock.lock();
+		try {
+			observersMap.clear();
+			observersCache = null;
+		}
+		finally {
+			lock.unlock();
+		}
+	}
+
 	public void inform() {
 		inform(informer);
 	}
