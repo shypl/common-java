@@ -57,16 +57,32 @@ public class ModularSystem {
 		}
 		started = true;
 
-		for (Module<?> module : modules) {
-			try {
-				module.startInternal(moduleFacades);
+
+		try {
+			for (Module<?> module : modules) {
+				try {
+					module.initializeInternal(moduleFacades);
+				}
+				catch (Exception e) {
+					logger.error("Fail to initialize module #" + module.getClass(), e);
+					throw e;
+				}
 			}
-			catch (Exception e) {
-				logger.error("Fail to start module #" + module.getClass(), e);
-				stop();
-				started = false;
-				return false;
+
+			for (Module<?> module : modules) {
+				try {
+					module.startInternal(moduleFacades);
+				}
+				catch (Exception e) {
+					logger.error("Fail to start module #" + module.getClass(), e);
+					throw e;
+				}
 			}
+		}
+		catch (Exception e) {
+			stop();
+			started = false;
+			return false;
 		}
 
 		return true;
