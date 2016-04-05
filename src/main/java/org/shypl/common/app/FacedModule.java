@@ -3,8 +3,9 @@ package org.shypl.common.app;
 public class FacedModule<F> extends Module<F> {
 	private final F facade;
 
+	@SuppressWarnings("unchecked")
 	public FacedModule(F facade) {
-		super();
+		super((Class<F>)facade.getClass());
 		this.facade = facade;
 	}
 

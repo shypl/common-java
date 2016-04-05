@@ -1,8 +1,13 @@
 package org.shypl.common.app;
 
 public abstract class Module<F> {
-	private boolean initialized;
-	private boolean started;
+	private final Class<F> facadeClass;
+	private       boolean  initialized;
+	private       boolean  started;
+
+	protected Module(Class<F> facadeClass) {
+		this.facadeClass = facadeClass;
+	}
 
 	public abstract F getFacade();
 
@@ -13,6 +18,10 @@ public abstract class Module<F> {
 	}
 
 	protected void stop(ModuleFacades modules) throws Exception {
+	}
+
+	Class<F> getFacadeClass() {
+		return facadeClass;
 	}
 
 	void initializeInternal(ModuleFacades modules) {

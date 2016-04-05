@@ -14,17 +14,16 @@ public class ModularSystem {
 
 	private final static Logger logger = LoggerFactory.getLogger(ModularSystem.class);
 
-	private final Map<Class<?>, Object> facades       = new HashMap<>();
-	private final Deque<Module<?>>      modules       = new ArrayDeque<>();
-	private final ModuleFacades         moduleFacades = this::getModuleFacade;
+	private final Map<Class<?>, Module<?>> facades       = new HashMap<>();
+	private final Deque<Module<?>>         modules       = new ArrayDeque<>();
+	private final ModuleFacades            moduleFacades = this::getModuleFacade;
 
 	private boolean started;
 
 	public void add(Module<?> module) {
 		if (!modules.contains(module)) {
 
-			Object facade = module.getFacade();
-			Class<?> facadeClass = facade.getClass();
+			Class<?> facadeClass = module.getFacadeClass();
 
 			if (!facadeClass.isAssignableFrom(PrivateModuleFacade.class)) {
 				if (facades.containsKey(facadeClass)) {
@@ -33,7 +32,7 @@ public class ModularSystem {
 					}
 				}
 				else {
-					facades.put(facadeClass, facade);
+					facades.put(facadeClass, module);
 				}
 			}
 
@@ -108,6 +107,6 @@ public class ModularSystem {
 
 	@SuppressWarnings("unchecked")
 	public <F> F getModuleFacade(Class<F> type) {
-		return (F)facades.get(type);
+		return (F)facades.get(type).getFacade();
 	}
 }
