@@ -30,6 +30,7 @@ public class Observers<T> {
 			if (holder == null) {
 				observersCache = null;
 				holder = new ObserveRepealer(observer);
+				observersMap.put(observer, holder);
 			}
 			return holder;
 		}
