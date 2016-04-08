@@ -38,7 +38,7 @@ public class AppConfigProvider {
 			fileName = fileName.substring(6); // remove "Config" prefix
 		}
 		else if (i > 0) {
-			fileName = fileName.substring(i);
+			fileName = fileName.substring(0, i);  // remove "Config" suffix
 		}
 
 		fileName = fileName.toLowerCase() + ".yml";
