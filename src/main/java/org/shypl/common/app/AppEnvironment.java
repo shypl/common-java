@@ -1,5 +1,6 @@
 package org.shypl.common.app;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -22,7 +23,9 @@ public class AppEnvironment {
 		try {
 			Path pathToEnv = getPathTo("private/config/env");
 			if (Files.exists(path)) {
-				type = Files.newBufferedReader(pathToEnv, StandardCharsets.UTF_8).readLine();
+				try (BufferedReader reader = Files.newBufferedReader(pathToEnv, StandardCharsets.UTF_8)) {
+					type = reader.readLine();
+				}
 			}
 			else {
 				type = "dev";

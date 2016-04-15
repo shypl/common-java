@@ -4,6 +4,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -19,9 +20,11 @@ import java.util.Map;
 public final class YamlConfigLoader {
 
 	public static <T> T load(Path file, Class<T> type) throws IOException, InstantiationException, IllegalAccessException {
-		@SuppressWarnings("unchecked")
-		final Map<String, Object> data = (Map<String, Object>)new Yaml().load(Files.newBufferedReader(file, StandardCharsets.UTF_8));
-		return constructObject(type, data);
+		try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+			@SuppressWarnings("unchecked")
+			final Map<String, Object> data = (Map<String, Object>)new Yaml().load(reader);
+			return constructObject(type, data);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
