@@ -38,11 +38,11 @@
 	<distributionManagement>
 		<repository>
 			<id>shypl-releases</id>
-			<url>http://nexus.shypl.org/repository/maven-releases/</url>
+			<url>http://nexus.shypl.org/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>shypl-snapshots</id>
-			<url>http://nexus.shypl.org/repository/maven-snapshots/</url>
+			<url>http://nexus.shypl.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
