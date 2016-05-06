@@ -1,6 +1,5 @@
 package org.shypl.common.sql;
 
-import org.shypl.common.util.CollectionUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
@@ -25,12 +24,18 @@ public class ThreadSafeDataSource implements DataSource, AutoCloseable {
 	@Override
 	public Connection getConnection() throws SQLException {
 		final long id = Thread.currentThread().getId();
-		ThreadSafeConnection connection = connections.get(id);
-		if (connection == null) {
-			connection = CollectionUtils.putIfAbsentAndGet(connections, id, new ThreadSafeConnection(source));
+		ThreadSafeConnection connection = connections.computeIfAbsent(id, key -> {
 			LOGGER.trace("Allocate new connection (total: {})", connections.size());
+			return new ThreadSafeConnection(source);
+		});
+
+		try {
+			connection.open();
 		}
-		connection.open();
+		catch (SQLException e) {
+			connections.remove(id, connection);
+			throw e;
+		}
 		return connection;
 	}
 
@@ -50,13 +55,13 @@ public class ThreadSafeDataSource implements DataSource, AutoCloseable {
 	}
 
 	@Override
-	public void setLoginTimeout(int seconds) throws SQLException {
-		source.setLoginTimeout(seconds);
+	public int getLoginTimeout() throws SQLException {
+		return source.getLoginTimeout();
 	}
 
 	@Override
-	public int getLoginTimeout() throws SQLException {
-		return source.getLoginTimeout();
+	public void setLoginTimeout(int seconds) throws SQLException {
+		source.setLoginTimeout(seconds);
 	}
 
 	@Override
