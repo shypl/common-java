@@ -8,7 +8,7 @@ public class NumberRecordValueHolder<T extends Number> extends AbstractRecordVal
 	}
 
 	@Override
-	public void save(AddablePreparedStatement st) throws SQLException {
+	public void doSave(AddablePreparedStatement st) throws SQLException {
 		T value = get();
 		if (value instanceof Integer) {
 			st.addInt(value.intValue());
