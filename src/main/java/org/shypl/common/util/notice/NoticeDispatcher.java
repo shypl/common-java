@@ -1,100 +1,70 @@
 package org.shypl.common.util.notice;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
+import org.shypl.common.util.Cancelable;
+import org.shypl.common.util.Observers;
+
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NoticeDispatcher implements NoticeDispatchable {
-	private final Map<Class<?>, HandlerList<?>> noticeTypesToHandlers = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Observers<?>> noticeTypesToHandlers = new ConcurrentHashMap<>();
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <N extends Notice> NoticeHandlerSub addNoticeHandler(Class<N> noticeClass, NoticeHandler<N> handler) {
-		HandlerList<N> handlers = getHandlers(noticeClass);
+	public <N extends Notice> Cancelable addNoticeHandler(Class<N> noticeClass, NoticeHandler<N> handler) {
+		Observers<NoticeHandler<N>> handlers = getHandlers(noticeClass);
 
 		if (handlers == null) {
-			handlers = (HandlerList<N>)noticeTypesToHandlers.computeIfAbsent(noticeClass, cls -> new HandlerList<>());
+			handlers = createHandlers(noticeClass);
 		}
 
-		handlers.add(handler);
-
-		return new NoticeHandlerSubImpl(this, noticeClass, handler);
+		return handlers.add(handler);
 	}
 
 	@Override
 	public <N extends Notice> void removeNoticeHandler(Class<N> noticeClass, NoticeHandler<N> handler) {
-		HandlerList<N> handlers = getHandlers(noticeClass);
-
+		Observers<NoticeHandler<N>> handlers = getHandlers(noticeClass);
 		if (handlers != null) {
 			handlers.remove(handler);
 		}
 	}
 
 	@Override
+	public <N extends Notice> void removeNoticeHandlers(Class<N> noticeClass) {
+		Observers<NoticeHandler<N>> handlers = getHandlers(noticeClass);
+		if (handlers != null) {
+			handlers.removeAll();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public void removeNoticeHandler(NoticeHandler<?> handler) {
-		for (HandlerList<?> list : noticeTypesToHandlers.values()) {
-			list.remove(handler);
+		for (Observers<?> handlers : noticeTypesToHandlers.values()) {
+			((Observers<NoticeHandler<?>>)handlers).remove(handler);
 		}
 	}
 
 	@Override
 	public void removeAllNoticeHandlers() {
-		Iterator<Map.Entry<Class<?>, HandlerList<?>>> iterator = noticeTypesToHandlers.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Map.Entry<Class<?>, HandlerList<?>> entry = iterator.next();
-			entry.getValue().clear();
-			iterator.remove();
-		}
+		noticeTypesToHandlers.values().forEach(Observers::removeAll);
 	}
 
 	@Override
 	public <N extends Notice> void dispatchNotice(N notice) {
 		@SuppressWarnings("unchecked")
-		HandlerList<N> handlers = getHandlers((Class<N>)notice.getClass());
+		Observers<NoticeHandler<N>> handlers = getHandlers((Class<N>)notice.getClass());
 		if (handlers != null) {
-			handlers.handle(notice);
+			handlers.inform(handler -> handler.handleNotice(notice));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private <N extends Notice> HandlerList<N> getHandlers(Class<N> noticeClass) {
-		return (HandlerList<N>)noticeTypesToHandlers.get(noticeClass);
+	private <N extends Notice> Observers<NoticeHandler<N>> getHandlers(Class<N> noticeClass) {
+		return (Observers<NoticeHandler<N>>)noticeTypesToHandlers.get(noticeClass);
 	}
 
-	private static class HandlerList<N extends Notice> {
-		private final Set<NoticeHandler<N>> collection = new LinkedHashSet<>();
-
-		public void add(NoticeHandler<N> handler) {
-			synchronized (collection) {
-				collection.add(handler);
-			}
-		}
-
-		@SuppressWarnings("SuspiciousMethodCalls")
-		public void remove(NoticeHandler<?> handler) {
-			synchronized (collection) {
-				collection.remove(handler);
-			}
-		}
-
-		public void handle(N notice) {
-			List<NoticeHandler<N>> list;
-
-			synchronized (collection) {
-				list = new ArrayList<>(collection);
-			}
-
-			for (NoticeHandler<N> handler : list) {
-				handler.handleNotice(notice);
-			}
-		}
-
-		public void clear() {
-			collection.clear();
-		}
+	@SuppressWarnings("unchecked")
+	private <N extends Notice> Observers<NoticeHandler<N>> createHandlers(Class<N> noticeClass) {
+		return (Observers<NoticeHandler<N>>)noticeTypesToHandlers.computeIfAbsent(noticeClass, cls -> new Observers<NoticeHandler<N>>());
 	}
 }
