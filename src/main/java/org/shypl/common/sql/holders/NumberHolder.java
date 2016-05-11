@@ -1,14 +1,16 @@
-package org.shypl.common.sql;
+package org.shypl.common.sql.holders;
+
+import org.shypl.common.sql.AddablePreparedStatement;
 
 import java.sql.SQLException;
 
-public class NumberRecordValueHolder<T extends Number> extends AbstractRecordValueHolder<T> {
-	public NumberRecordValueHolder(T value) {
+public class NumberHolder<T extends Number> extends ObjectHolder<T> {
+	public NumberHolder(T value) {
 		super(value);
 	}
 
 	@Override
-	protected void doSave(AddablePreparedStatement st) throws SQLException {
+	protected void write(AddablePreparedStatement st) throws SQLException {
 		T value = get();
 		if (value instanceof Integer) {
 			st.addInt(value.intValue());
