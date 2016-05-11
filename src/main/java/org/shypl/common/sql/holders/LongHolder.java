@@ -36,6 +36,13 @@ public class LongHolder extends AbstractHolder {
 		}
 	}
 
+	public void add(long v) {
+		if (v != 0) {
+			value += v;
+			markAsChanged();
+		}
+	}
+
 	@Override
 	protected void write(AddablePreparedStatement st) throws SQLException {
 		if (unsigned && value < 0) {

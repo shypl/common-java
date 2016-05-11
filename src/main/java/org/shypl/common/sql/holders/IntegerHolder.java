@@ -29,9 +29,16 @@ public class IntegerHolder extends AbstractHolder {
 		return value;
 	}
 
-	public void set(int value) {
-		if (this.value != value) {
-			this.value = value;
+	public void set(int v) {
+		if (value != v) {
+			value = v;
+			markAsChanged();
+		}
+	}
+
+	public void add(int v) {
+		if (v != 0) {
+			value += v;
 			markAsChanged();
 		}
 	}
