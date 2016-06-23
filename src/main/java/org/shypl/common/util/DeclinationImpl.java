@@ -1,6 +1,8 @@
 package org.shypl.common.util;
 
 public class DeclinationImpl implements Declination {
+	private static final long serialVersionUID = 42;
+
 	private final String word1;
 	private final String word2;
 	private final String word5;
