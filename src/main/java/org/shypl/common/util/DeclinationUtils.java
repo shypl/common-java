@@ -59,11 +59,9 @@ public final class DeclinationUtils {
 				.append(" ");
 		}
 
-		if (days > 0) {
-			sb.append(days)
-				.append(" ")
-				.append(defineWordDeclinationRu(months, DAYS));
-		}
+		sb.append(days)
+			.append(" ")
+			.append(defineWordDeclinationRu(months, DAYS));
 
 		return sb.toString();
 	}
