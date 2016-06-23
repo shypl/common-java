@@ -8,14 +8,14 @@ import static java.lang.Math.max;
 
 public final class DeclinationUtils {
 
-	public static final Declination YEARS = new DeclinationImpl("год", "года", "лет");
+	public static final Declination YEARS  = new DeclinationImpl("год", "года", "лет");
 	public static final Declination MONTHS = new DeclinationImpl("месяц", "месяца", "месяцев");
-	public static final Declination DAYS = new DeclinationImpl("день", "дня", "дней");
+	public static final Declination DAYS   = new DeclinationImpl("день", "дня", "дней");
 
 	private DeclinationUtils() {
 	}
 
-	public  static <T extends Declination> String defineWordDeclinationRu(int number, T declination) {
+	public static <T extends Declination> String defineWordDeclinationRu(int number, T declination) {
 		if (number % 100 > 10 && number % 100 < 15) {
 			return declination.getWord5();
 		}
@@ -46,17 +46,23 @@ public final class DeclinationUtils {
 
 		StringBuilder sb = new StringBuilder();
 		if (years > 0) {
-			sb.append(defineWordDeclinationRu(years, YEARS));
-			sb.append(" ");
+			sb.append(years)
+				.append(" ")
+				.append(defineWordDeclinationRu(years, YEARS))
+				.append(" ");
 		}
 
-		if(months > 0) {
-			sb.append(defineWordDeclinationRu(months, MONTHS));
-			sb.append(" ");
+		if (months > 0) {
+			sb.append(months)
+				.append(" ")
+				.append(defineWordDeclinationRu(months, MONTHS))
+				.append(" ");
 		}
 
-		if(days > 0) {
-			sb.append(defineWordDeclinationRu(months, DAYS));
+		if (days > 0) {
+			sb.append(days)
+				.append(" ")
+				.append(defineWordDeclinationRu(months, DAYS));
 		}
 
 		return sb.toString();
