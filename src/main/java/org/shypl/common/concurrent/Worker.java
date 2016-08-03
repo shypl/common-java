@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+//TODO: what about memory barrier???
 public class Worker {
 	public static final Logger LOGGER = LoggerFactory.getLogger(Worker.class);
 	
