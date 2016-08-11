@@ -5,10 +5,14 @@ import org.shypl.common.util.Cancelable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 //TODO: what about memory barrier???
 public class Worker {
@@ -45,7 +49,10 @@ public class Worker {
 			executor.execute(this::runTasks);
 		}
 	}
-	
+	public Cancelable scheduleTask(Runnable task, LocalDateTime date) {
+		long delayMills = Duration.between(LocalDateTime.now(), date).toMillis();
+		return scheduleTask(task, delayMills, MILLISECONDS);
+	}
 	public Cancelable scheduleTask(Runnable task, long delay, TimeUnit unit) {
 		ScheduledTaskHolder holder = new ScheduledTaskHolder(task);
 		holder.setFuture(executor.schedule(holder, delay, unit));
