@@ -1,7 +1,6 @@
 
 package org.shypl.common.concurrent;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jctools.queues.MpscLinkedQueue8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ public class AsyncWorker {
 		this.delayBetweenTasks = delayBetweenTasks;
 	}
 	
-	public CompletableFuture addTask(Runnable runnable) {
+	public CompletableFuture<Void> addTask(Runnable runnable) {
 		Task task = new Task(runnable);
 
 		tasks.add(task);
