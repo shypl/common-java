@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -16,7 +16,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 public class AsyncWorker {
 	public static final Logger LOGGER = LoggerFactory.getLogger(AsyncWorker.class);
 	
-	private final MpscLinkedQueue8<Consumer<CompletableFuture<Void>>> tasks = new MpscLinkedQueue8<>();
+	private final MpscLinkedQueue8<Task> tasks = new MpscLinkedQueue8<>();
 	private final ScheduledExecutorService executor;
 	private final AtomicBoolean working = new AtomicBoolean();
 	
@@ -32,23 +32,39 @@ public class AsyncWorker {
 		this.delayBetweenTasks = delayBetweenTasks;
 	}
 	
-	public void addTask(Runnable task) {
-		addTask(cf -> {
-			task.run();
-			cf.complete(null);
+	public class Task extends CompletableFuture<Void> {
+		private final Supplier<CompletableFuture<Void>> workSupplier;
+		
+		public Task(Supplier<CompletableFuture<Void>> workSupplier) {
+			this.workSupplier = workSupplier;
+		}
+		
+		public Supplier<CompletableFuture<Void>> getWorkSupplier() {
+			return workSupplier;
+		}
+	}
+	
+	public Task addTask(Runnable runnable) {
+		return addTask(() -> {
+			runnable.run();
+			return CompletableFuture.completedFuture(null);
 		});
 	}
 	
-	public void addTask(Consumer<CompletableFuture<Void>> task) {
+	public Task addTask(Supplier<CompletableFuture<Void>> workSupplier) {
+		Task task = new Task(workSupplier);
+		
 		tasks.add(task);
 		
 		if (working.compareAndSet(false, true)) {
 			executor.execute(this::runNextTask);
 		}
+		
+		return task;
 	}
 	
 	private void runNextTask() {
-		Consumer<CompletableFuture<Void>> task = tasks.relaxedPeek();
+		Task task = tasks.relaxedPeek();
 		
 		if (task != null) {
 			long now = currentTimeMillis();
@@ -69,16 +85,14 @@ public class AsyncWorker {
 		}
 	}
 	
-	private void runTask(Consumer<CompletableFuture<Void>> task) {
-		CompletableFuture<Void> cf = new CompletableFuture<>()
-			.exceptionally(this::logException)
-			.thenRunAsync(this::runNextTask, executor);
-		
+	private void runTask(Task task) {
 		try {
-			task.accept(cf);
+			CompletableFuture<Void> workFuture = task.getWorkSupplier().get();
+			workFuture.whenCompleteAsync((aVoid, throwable) -> runNextTask(), executor);
+			workFuture.handle((result, exception) -> exception == null ? task.complete(result) : task.completeExceptionally(exception));
 		}
 		catch (Throwable e) {
-			cf.completeExceptionally(e);
+			task.completeExceptionally(e);
 		}
 	}
 	
