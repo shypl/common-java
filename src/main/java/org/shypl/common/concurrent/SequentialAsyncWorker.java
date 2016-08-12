@@ -13,8 +13,8 @@ import java.util.function.Consumer;
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class AsyncWorker {
-	public static final Logger LOGGER = LoggerFactory.getLogger(AsyncWorker.class);
+public class SequentialAsyncWorker {
+	public static final Logger LOGGER = LoggerFactory.getLogger(SequentialAsyncWorker.class);
 	
 	private final MpscLinkedQueue8<Consumer<CompletableFuture<Void>>> tasks = new MpscLinkedQueue8<>();
 	private final ScheduledExecutorService executor;
@@ -23,11 +23,11 @@ public class AsyncWorker {
 	private final    int  delayBetweenTasks;
 	private volatile long lastTaskStartTime;
 	
-	public AsyncWorker(ScheduledExecutorService executor) {
+	public SequentialAsyncWorker(ScheduledExecutorService executor) {
 		this(executor, 0);
 	}
 	
-	public AsyncWorker(ScheduledExecutorService executor, int delayBetweenTasks) {
+	public SequentialAsyncWorker(ScheduledExecutorService executor, int delayBetweenTasks) {
 		this.executor = executor;
 		this.delayBetweenTasks = delayBetweenTasks;
 	}
