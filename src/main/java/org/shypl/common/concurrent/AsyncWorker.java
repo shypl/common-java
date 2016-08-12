@@ -88,11 +88,12 @@ public class AsyncWorker {
 	private void runTask(Task task) {
 		try {
 			CompletableFuture<Void> workFuture = task.getWorkSupplier().get();
-			workFuture.whenCompleteAsync((aVoid, throwable) -> runNextTask(), executor);
 			workFuture.handle((result, exception) -> exception == null ? task.complete(result) : task.completeExceptionally(exception));
 		}
 		catch (Throwable e) {
 			task.completeExceptionally(e);
+		} finally {
+			executor.execute(this::runNextTask);
 		}
 	}
 	
