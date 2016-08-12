@@ -48,7 +48,7 @@ public class AsyncWorker {
 	}
 	
 	private void runNextTask() {
-		Consumer<CompletableFuture<Void>> task = tasks.relaxedPoll();
+		Consumer<CompletableFuture<Void>> task = tasks.relaxedPeek();
 		
 		if (task != null) {
 			long now = currentTimeMillis();
