@@ -49,10 +49,12 @@ public class Worker {
 			executor.execute(this::runTasks);
 		}
 	}
+	
 	public Cancelable scheduleTask(Runnable task, LocalDateTime date) {
 		long delayMills = Duration.between(LocalDateTime.now(), date).toMillis();
 		return scheduleTask(task, delayMills, MILLISECONDS);
 	}
+	
 	public Cancelable scheduleTask(Runnable task, long delay, TimeUnit unit) {
 		ScheduledTaskHolder holder = new ScheduledTaskHolder(task);
 		holder.setFuture(executor.schedule(holder, delay, unit));
@@ -86,11 +88,14 @@ public class Worker {
 		}
 		
 		@Override
-		public void cancel() {
+		public boolean cancel() {
+			boolean cancelled = false;
 			if (actual.compareAndSet(true, false)) {
-				future.cancel(false);
+				cancelled = future.cancel(false);
 				future = null;
 			}
+			
+			return cancelled;
 		}
 		
 		public void setFuture(ScheduledFuture<?> future) {

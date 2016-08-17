@@ -92,8 +92,8 @@ public class AsyncWorker {
 			workFuture.handle((result, exception) -> exception == null ? task.complete(result) : task.completeExceptionally(exception));
 		}
 		catch (Throwable e) {
-			executor.execute(this::runNextTask);
 			task.completeExceptionally(e);
+			executor.execute(this::runNextTask);
 		}
 	}
 	

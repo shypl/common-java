@@ -9,20 +9,20 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 public class Observers<T> {
-
+	
 	private final Lock                              lock         = new ReentrantLock();
 	private final LinkedHashMap<T, ObserveRepealer> observersMap = new LinkedHashMap<>(1);
 	private final Consumer<T> informer;
 	private       Object[]    observersCache;
-
+	
 	public Observers(Consumer<T> informer) {
 		this.informer = informer;
 	}
-
+	
 	public Observers() {
 		this(null);
 	}
-
+	
 	public Cancelable add(T observer) {
 		lock.lock();
 		try {
@@ -38,19 +38,23 @@ public class Observers<T> {
 			lock.unlock();
 		}
 	}
-
-	public void remove(T observer) {
+	
+	public boolean remove(T observer) {
+		boolean removed = false;
 		lock.lock();
 		try {
 			if (null != observersMap.remove(observer)) {
 				observersCache = null;
+				removed = true;
 			}
 		}
 		finally {
 			lock.unlock();
 		}
+		
+		return removed;
 	}
-
+	
 	public void removeAll() {
 		lock.lock();
 		try {
@@ -61,16 +65,16 @@ public class Observers<T> {
 			lock.unlock();
 		}
 	}
-
+	
 	public void inform() {
 		inform(informer);
 	}
-
+	
 	public void inform(Consumer<T> informer) {
 		Objects.requireNonNull(informer);
-
+		
 		Object[] observers;
-
+		
 		lock.lock();
 		try {
 			if (observersCache == null) {
@@ -81,10 +85,10 @@ public class Observers<T> {
 		finally {
 			lock.unlock();
 		}
-
+		
 		inform0(informer, observers);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private void inform0(Consumer<T> informer, Object[] observers) {
 		for (Object observer : observers) {
@@ -96,17 +100,17 @@ public class Observers<T> {
 			}
 		}
 	}
-
+	
 	private class ObserveRepealer implements Cancelable {
 		private final T observer;
-
+		
 		public ObserveRepealer(T observer) {
 			this.observer = observer;
 		}
-
+		
 		@Override
-		public void cancel() {
-			remove(observer);
+		public boolean cancel() {
+			return remove(observer);
 		}
 	}
 }
