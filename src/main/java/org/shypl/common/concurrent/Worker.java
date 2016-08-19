@@ -88,14 +88,12 @@ public class Worker {
 		}
 		
 		@Override
-		public boolean cancel() {
-			boolean cancelled = false;
+		public void cancel() {
 			if (actual.compareAndSet(true, false)) {
-				cancelled = future.cancel(false);
+				future.cancel(false);
 				future = null;
 			}
 			
-			return cancelled;
 		}
 		
 		public void setFuture(ScheduledFuture<?> future) {

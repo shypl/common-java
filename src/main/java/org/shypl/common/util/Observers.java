@@ -39,20 +39,16 @@ public class Observers<T> {
 		}
 	}
 	
-	public boolean remove(T observer) {
-		boolean removed = false;
+	public void remove(T observer) {
 		lock.lock();
 		try {
 			if (null != observersMap.remove(observer)) {
 				observersCache = null;
-				removed = true;
 			}
 		}
 		finally {
 			lock.unlock();
 		}
-		
-		return removed;
 	}
 	
 	public void removeAll() {
@@ -109,8 +105,8 @@ public class Observers<T> {
 		}
 		
 		@Override
-		public boolean cancel() {
-			return remove(observer);
+		public void cancel() {
+			remove(observer);
 		}
 	}
 }
