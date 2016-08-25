@@ -14,13 +14,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-//TODO: what about memory barrier???
 public class Worker {
 	public static final Logger LOGGER = LoggerFactory.getLogger(Worker.class);
 	
 	private final MpscLinkedQueue8<Runnable> tasks = new MpscLinkedQueue8<>();
 	private final ScheduledExecutorService executor;
 	private final AtomicBoolean working = new AtomicBoolean();
+	
+	private final Object mutex = new Object();
 	
 	public Worker(ScheduledExecutorService executor) {
 		this.executor = executor;
@@ -37,7 +38,9 @@ public class Worker {
 	private void runTasks() {
 		tasks.drain(task -> {
 			try {
-				task.run();
+				synchronized (mutex) {
+					task.run();
+				}
 			}
 			catch (Throwable e) {
 				LOGGER.error("Error on run task " + task.getClass().getName(), e);
@@ -72,8 +75,8 @@ public class Worker {
 	}
 	
 	private class ScheduledTaskHolder implements Cancelable, Runnable {
-		private final Runnable           task;
-		private       ScheduledFuture<?> future;
+		private final    Runnable           task;
+		private volatile ScheduledFuture<?> future;
 		private final AtomicBoolean actual = new AtomicBoolean(true);
 		
 		public ScheduledTaskHolder(Runnable task) {

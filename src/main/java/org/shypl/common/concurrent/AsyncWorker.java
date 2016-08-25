@@ -85,7 +85,7 @@ public class AsyncWorker {
 		}
 	}
 	
-	private void runTask(Task task) {
+	private synchronized void runTask(Task task) {
 		try {
 			CompletableFuture<Void> workFuture = task.getWorkSupplier().get();
 			workFuture.whenCompleteAsync((aVoid, throwable) -> runNextTask(), executor);
