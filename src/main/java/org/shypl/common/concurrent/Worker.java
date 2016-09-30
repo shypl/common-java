@@ -8,11 +8,9 @@ import java.util.Queue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Worker {
-	private final Lock            lock  = new ReentrantLock();
+	private final Object          lock  = new Object();
 	private final Queue<Runnable> tasks = new LinkedQueue<>();
 	private final ScheduledExecutorService executor;
 	private       boolean                  executing;
@@ -22,19 +20,17 @@ public class Worker {
 	}
 	
 	public void addTask(Runnable task) {
-		lock.lock();
-		try {
+		synchronized (lock) {
 			if (executing) {
 				tasks.add(task);
 				return;
 			}
 			executing = true;
 		}
-		finally {
-			lock.unlock();
-		}
 		
-		executor.execute(new TaskRunner(task));
+		new TaskRunner(task).run();
+		
+		//executor.execute(new TaskRunner(task));
 	}
 	
 	public Cancelable scheduleTask(Runnable task, long delay, TimeUnit unit) {
@@ -69,17 +65,12 @@ public class Worker {
 				LoggerFactory.getLogger(TaskRunner.class).error("Error on run task " + task.getClass().getName(), e);
 			}
 			
-			lock.lock();
-			try {
+			synchronized (lock) {
 				task = tasks.poll();
 				if (task == null) {
 					executing = false;
 					return;
 				}
-				executing = true;
-			}
-			finally {
-				lock.unlock();
 			}
 			
 			executor.execute(this);
