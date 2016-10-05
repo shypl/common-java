@@ -10,36 +10,26 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Worker {
-	private final Object          lock                 = new Object();
-	private final Queue<Runnable> executorTasks        = new LinkedQueue<>();
-	private final Queue<Runnable> executingThreadTasks = new LinkedQueue<>();
+	private final Object          lock  = new Object();
+	private final Queue<Runnable> queue = new LinkedQueue<>();
 	private final ScheduledExecutorService executor;
 	private       boolean                  executing;
-	private       long                     executingThreadId;
 	
 	public Worker(ScheduledExecutorService executor) {
 		this.executor = executor;
 	}
 	
 	public void addTask(Runnable task) {
-		long currentThreadId = getCurrentThreadId();
-		
 		synchronized (lock) {
 			if (executing) {
-				if (currentThreadId == executingThreadId) {
-					executingThreadTasks.add(task);
-				}
-				else {
-					executorTasks.add(task);
-				}
+				queue.add(task);
 				return;
 			}
-			
 			executing = true;
-			executingThreadId = currentThreadId;
 		}
 		
-		new TaskRunner(task).run();
+		runTask(task);
+		processQueue();
 	}
 	
 	public Cancelable scheduleTask(Runnable task, long delay, TimeUnit unit) {
@@ -58,55 +48,27 @@ public class Worker {
 		return scheduledTask;
 	}
 	
-	private long getCurrentThreadId() {
-		return Thread.currentThread().getId();
-	}
-	
-	private class TaskRunner implements Runnable {
-		private Runnable task;
+	private void processQueue() {
+		Runnable task;
 		
-		public TaskRunner(Runnable task) {
-			this.task = task;
-		}
-		
-		@Override
-		public void run() {
-			
+		while (true) {
 			synchronized (lock) {
-				executingThreadId = getCurrentThreadId();
-			}
-			
-			runTask();
-			
-			while (true) {
-				synchronized (lock) {
-					task = executingThreadTasks.poll();
-					if (task == null) {
-						executingThreadId = 0;
-						break;
-					}
-				}
-				runTask();
-			}
-			
-			synchronized (lock) {
-				task = executorTasks.poll();
+				task = queue.poll();
 				if (task == null) {
 					executing = false;
 					return;
 				}
 			}
-			
-			executor.execute(this);
+			runTask(task);
 		}
-		
-		private void runTask() {
-			try {
-				task.run();
-			}
-			catch (Throwable e) {
-				LoggerFactory.getLogger(TaskRunner.class).error("Error on run task " + task.getClass().getName(), e);
-			}
+	}
+	
+	private void runTask(Runnable task) {
+		try {
+			task.run();
+		}
+		catch (Throwable e) {
+			LoggerFactory.getLogger(Worker.class).error("Error on run task " + task.getClass().getName(), e);
 		}
 	}
 	
