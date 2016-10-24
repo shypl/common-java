@@ -8,15 +8,20 @@ import java.util.Queue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class Worker {
 	private final Object          lock  = new Object();
 	private final Queue<Runnable> queue = new LinkedQueue<>();
-	private final ScheduledExecutorService executor;
+	private final Supplier<ScheduledExecutorService> executor;
 	private       boolean                  executing;
 	
-	public Worker(ScheduledExecutorService executor) {
+	public Worker(Supplier<ScheduledExecutorService> executor) {
 		this.executor = executor;
+	}
+	
+	public Worker(ScheduledExecutorService executor) {
+		this.executor = () -> executor;
 	}
 	
 	public void addTask(Runnable task) {
@@ -34,7 +39,7 @@ public class Worker {
 	
 	public Cancelable scheduleTask(Runnable task, long delay, TimeUnit unit) {
 		ScheduledTaskHolder holder = new ScheduledTaskHolder(task);
-		holder.setFuture(executor.schedule(holder, delay, unit));
+		holder.setFuture(executor.get().schedule(holder, delay, unit));
 		return holder;
 	}
 	
@@ -44,7 +49,7 @@ public class Worker {
 	
 	public Cancelable scheduleTaskPeriodic(Runnable task, long initialDelay, long period, TimeUnit unit) {
 		ScheduledTaskHolder scheduledTask = new ScheduledTaskHolder(task);
-		scheduledTask.setFuture(executor.scheduleAtFixedRate(scheduledTask, initialDelay, period, unit));
+		scheduledTask.setFuture(executor.get().scheduleAtFixedRate(scheduledTask, initialDelay, period, unit));
 		return scheduledTask;
 	}
 	
