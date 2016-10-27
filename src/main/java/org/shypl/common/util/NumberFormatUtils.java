@@ -8,21 +8,29 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public final class NumberFormatUtils {
-
+	
 	private NumberFormatUtils() {
-
+		
 	}
-
+	
 	public static DecimalFormat decimalFormat() {
-
+		return decimalFormat(false);
+	}
+	
+	public static DecimalFormat decimalFormat(boolean showSign) {
 		DecimalFormat formatter = (DecimalFormat)NumberFormat.getInstance(Locale.US);
 		DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
-
+		
 		symbols.setGroupingSeparator(' ');
 		formatter.setDecimalFormatSymbols(symbols);
+		
+		if (showSign) {
+			formatter.setPositivePrefix("+");
+		}
+		
 		return formatter;
 	}
-
+	
 	public static DecimalFormat percentFormat() {
 		DecimalFormat format = decimalFormat();
 		format.setPositiveSuffix("%");
