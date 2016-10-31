@@ -4,11 +4,15 @@ import org.shypl.common.util.Cancelable;
 import org.shypl.common.util.LinkedQueue;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Queue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class Worker {
 	private final Object          lock  = new Object();
@@ -41,6 +45,11 @@ public class Worker {
 		ScheduledTaskHolder holder = new ScheduledTaskHolder(task);
 		holder.setFuture(executor.get().schedule(holder, delay, unit));
 		return holder;
+	}
+	
+	public Cancelable scheduleTask(Runnable task, LocalDateTime date) {
+		long delayMills = Duration.between(LocalDateTime.now(), date).toMillis();
+		return scheduleTask(task, delayMills, MILLISECONDS);
 	}
 	
 	public Cancelable scheduleTaskPeriodic(Runnable task, long period, TimeUnit unit) {
