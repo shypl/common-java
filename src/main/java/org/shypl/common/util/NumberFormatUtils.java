@@ -17,11 +17,19 @@ public final class NumberFormatUtils {
 		return decimalFormat(false);
 	}
 	
+	
 	public static DecimalFormat decimalFormat(boolean showSign) {
+		return decimalFormat(true, showSign);
+	}
+	
+	public static DecimalFormat decimalFormat(boolean useGroupingSeparator, boolean showSign) {
 		DecimalFormat formatter = (DecimalFormat)NumberFormat.getInstance(Locale.US);
 		DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
 		
-		symbols.setGroupingSeparator(' ');
+		if (useGroupingSeparator) {
+			symbols.setGroupingSeparator(' ');
+		}
+		
 		formatter.setDecimalFormatSymbols(symbols);
 		
 		if (showSign) {
