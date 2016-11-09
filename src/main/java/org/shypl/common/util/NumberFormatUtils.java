@@ -28,6 +28,8 @@ public final class NumberFormatUtils {
 		
 		if (useGroupingSeparator) {
 			symbols.setGroupingSeparator(' ');
+		} else {
+			formatter.setGroupingUsed(false);
 		}
 		
 		formatter.setDecimalFormatSymbols(symbols);
