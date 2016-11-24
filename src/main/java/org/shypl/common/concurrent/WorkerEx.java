@@ -11,45 +11,93 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class Worker2 {
-	public static final Logger LOGGER = LoggerFactory.getLogger(Worker2.class);
+public class WorkerEx {
+	public static final Logger LOGGER = LoggerFactory.getLogger(WorkerEx.class);
 	
-	private final MpscLinkedQueue8<Runnable> tasks = new MpscLinkedQueue8<>();
-	private final ScheduledExecutorService executor;
-	private final AtomicBoolean working = new AtomicBoolean();
+	private final MpscLinkedQueue8<Runnable> tasks   = new MpscLinkedQueue8<>();
+	private final AtomicBoolean              working = new AtomicBoolean();
+	private final Supplier<ScheduledExecutorService> executor;
 	
-	private final Object mutex = new Object();
+	private volatile Thread thread;
 	
-	public Worker2(ScheduledExecutorService executor) {
+	public WorkerEx(Supplier<ScheduledExecutorService> executor) {
 		this.executor = executor;
 	}
 	
+	public WorkerEx(ScheduledExecutorService executor) {
+		this.executor = () -> executor;
+	}
+	
 	public void addTask(Runnable task) {
+		addTask(task, true);
+	}
+	
+	public void addTask(Runnable task, boolean addToQueue) {
+		if (addToQueue) {
+			planRunTask(task);
+		}
+		else {
+			tryRunTaskNow(task);
+		}
+	}
+	
+	private void tryRunTaskNow(Runnable task) {
+		if (isSameThread()) {
+			runExceptionSafe(task);
+			return;
+		}
+		
+		if (working.compareAndSet(false, true)) {
+			this.thread = currentThread();
+			
+			runExceptionSafe(task);
+			
+			this.thread = null;
+			this.working.set(false);
+			planRunTasks();
+			
+			return;
+		}
+		
+		tasks.add(task);
+		planRunTasks();
+	}
+	
+	private void planRunTask(Runnable task) {
 		tasks.add(task);
 		
 		if (working.compareAndSet(false, true)) {
-			executor.execute(this::runTasks);
+			executor.get().execute(this::runTasks);
 		}
 	}
 	
 	private void runTasks() {
-		tasks.drain(task -> {
-			try {
-				synchronized (mutex) {
-					task.run();
-				}
-			}
-			catch (Throwable e) {
-				LOGGER.error("Error on run task " + task.getClass().getName(), e);
-			}
-		});
+		thread = currentThread();
 		
+		tasks.drain(this::runExceptionSafe);
+		
+		thread = null;
 		working.set(false);
+		planRunTasks();
+	}
+	
+	private void runExceptionSafe(Runnable task) {
+		try {
+			task.run();
+		}
+		catch (Throwable e) {
+			LOGGER.error("Error on run task " + task.getClass().getName(), e);
+		}
+	}
+	
+	private void planRunTasks() {
 		if (!tasks.isEmpty() && working.compareAndSet(false, true)) {
-			executor.execute(this::runTasks);
+			executor.get().execute(this::runTasks);
 		}
 	}
 	
@@ -60,7 +108,7 @@ public class Worker2 {
 	
 	public Cancelable scheduleTask(Runnable task, long delay, TimeUnit unit) {
 		ScheduledTaskHolder holder = new ScheduledTaskHolder(task);
-		holder.setFuture(executor.schedule(holder, delay, unit));
+		holder.setFuture(executor.get().schedule(holder, delay, unit));
 		return holder;
 	}
 	
@@ -70,7 +118,7 @@ public class Worker2 {
 	
 	public Cancelable scheduleTaskPeriodic(Runnable task, long initialDelay, long period, TimeUnit unit) {
 		ScheduledTaskHolder scheduledTask = new ScheduledTaskHolder(task);
-		scheduledTask.setFuture(executor.scheduleAtFixedRate(scheduledTask, initialDelay, period, unit));
+		scheduledTask.setFuture(executor.get().scheduleAtFixedRate(scheduledTask, initialDelay, period, unit));
 		return scheduledTask;
 	}
 	
@@ -102,5 +150,9 @@ public class Worker2 {
 		public void setFuture(ScheduledFuture<?> future) {
 			this.future = future;
 		}
+	}
+	
+	private boolean isSameThread() {
+		return thread == currentThread();
 	}
 }
