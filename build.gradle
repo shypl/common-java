@@ -1,0 +1,44 @@
+group = 'org.shypl.common'
+version = '1.0.5'
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	compile 'org.slf4j:slf4j-api:1.7.13'
+	compile 'org.yaml:snakeyaml:1.16'
+	compile 'org.apache.commons:commons-lang3:3.4'
+	compile 'org.jctools:jctools-core:2.0'
+	testCompile 'junit:junit:4.12'
+}
+
+def release = hasProperty('release')
+def publishingRepositoryUrl = release ? publishingRepositoryUrlReleases : publishingRepositoryUrlSnapshots
+
+if (!release) {
+	version += "-SNAPSHOT"
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
+		maven {
+			url publishingRepositoryUrl
+			credentials {
+				username publishingRepositoryUsername
+				password publishingRepositoryPassword
+			}
+		}
+	}
+}
