@@ -28,7 +28,7 @@ public final class RandomUtils {
 		for (; i < weights.length; ++i) {
 			if (weights[i] != 0) {
 				weightsSum += weights[i];
-				if (weightsSum >= rnd) {
+				if (weightsSum > rnd) {
 					return i;
 				}
 			}
